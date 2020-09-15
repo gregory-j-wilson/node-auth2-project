@@ -2,6 +2,7 @@ const express = require("express")
 const helmet = require("helmet")
 const cors = require("cors")
 const bcryptjs = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 const server = express()
 
@@ -48,6 +49,7 @@ server.post("/api/login", (req, res) => {
     if (isValid(req.body)) {
         Users.findBy({username: username})
             .then(([user]) => {
+                console.log(user)
                 if (user && bcryptjs.compareSync(password, user.password)) {
 
                     const token = makeJwt(user)
@@ -58,7 +60,8 @@ server.post("/api/login", (req, res) => {
                 }
             })
             .catch(error => {
-                res.status(500).json({error: "You are not in the system"})
+                console.log(error)
+                res.status(500).json({error: error})
             })
     } else {
         res.status(400).json({message: "Please provide your username and password."})
