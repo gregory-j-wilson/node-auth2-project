@@ -73,7 +73,9 @@ server.get("/api/users", restricted, (req, res) => {
 
     Users.find()
         .then(users => {
-            res.status(200).json(users)
+            res.status(200).json(users.filter(user => {
+                return user.department === req.jwt.department
+            }))
         })
         .catch(err => res.send(err))
 })
@@ -84,7 +86,8 @@ server.get("/api/users", restricted, (req, res) => {
 function makeJwt(user) {
 
     const payload = {
-        username: user.username
+        username: user.username,
+        department: user.department
     }
 
     const config = {
